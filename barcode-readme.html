@@ -1,0 +1,258 @@
+<html>
+<head>
+<title>barcode.php readme</title>
+<style>
+	body {
+		font-family: Helvetica, sans-serif;
+		padding: 1em;
+	}
+	th, td {
+		padding: 4pt 1em 4pt 0;
+		vertical-align: top;
+	}
+</style>
+</head>
+<body>
+
+<h1>barcode.php</h1>
+<h3>Generate barcodes from a single PHP file. MIT license.</h3>
+
+<p>Use from a PHP script:</p>
+<pre>
+include 'barcode.php';
+
+$generator = new barcode_generator();
+
+/* Output directly to standard output. */
+$generator->output_image($format, $symbology, $data, $options);
+
+/* Create bitmap image. */
+$image = $generator->render_image($symbology, $data, $options);
+imagepng($image);
+imagedestroy($image);
+
+/* Generate SVG markup. */
+$svg = $generator->render_svg($symbology, $data, $options);
+echo $svg;
+</pre>
+
+<p>Use with GET or POST:</p>
+<pre>
+barcode.php?f=<i>format</i>&s=<i>symbology</i>&d=<i>data</i>&<i>options</i>
+</pre>
+<p>e.g.</p>
+<pre>
+barcode.php?f=png&s=upc-e&d=06543217
+barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
+</pre>
+
+<h4>Options:</h4>
+<table>
+	<tr>
+		<td><code>f</code></td>
+		<td>
+			Format. One of:
+			<table>
+				<tr>
+					<td>
+						<code>png</code><br>
+						<code>gif</code><br>
+						<code>jpeg</code><br>
+						<code>svg</code>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td><code>s</code></td>
+		<td>
+			Symbology (type of barcode). One of:
+			<table>
+				<tr>
+					<td>
+						<code>upc-a</code><br>
+						<code>upc-e</code><br>
+						<code>ean-13</code><br>
+						<code>ean-8</code><br>
+						<code>ean-128</code>
+					</td>
+					<td>
+						<code>code-39</code><br>
+						<code>code-39-ascii</code><br>
+						<code>code-93</code><br>
+						<code>code-93-ascii</code><br>
+						<code>code-128</code><br>
+						<code>codabar</code><br>
+						<code>itf</code>
+					</td>
+					<td>
+						<code>qr</code><br>
+						<code>qr-l</code><br>
+						<code>qr-m</code><br>
+						<code>qr-q</code><br>
+						<code>qr-h</code>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td><code>d</code></td>
+		<td>
+			Data.<br>
+			For UPC or EAN, use <code>*</code> for missing digit.<br>
+			For Codabar, use <code>ABCD</code> or <code>ENT*</code>
+			for start and stop characters.<br>
+			For QR, encode in Shift-JIS for kanji mode.
+		</td>
+	</tr>
+	<tr>
+		<td><code>w</code></td>
+		<td>Width of image. Overrides <code>sf</code> or <code>sx</code>.</td>
+	</tr>
+	<tr>
+		<td><code>h</code></td>
+		<td>Height of image. Overrides <code>sf</code> or <code>sy</code>.</td>
+	</tr>
+	<tr>
+		<td><code>sf</code></td>
+		<td>Scale factor.</td>
+	</tr>
+	<tr>
+		<td><code>sx</code></td>
+		<td>Horizontal scale factor. Overrides <code>sf</code>.</td>
+	</tr>
+	<tr>
+		<td><code>sy</code></td>
+		<td>Vertical scale factor. Overrides <code>sf</code>.</td>
+	</tr>
+	<tr>
+		<td><code>p</code></td>
+		<td>Padding. Default is 10.</td>
+	</tr>
+	<tr>
+		<td><code>pv</code></td>
+		<td>Top and bottom padding. Default is value of <code>p</code>.</td>
+	</tr>
+	<tr>
+		<td><code>ph</code></td>
+		<td>Left and right padding. Default is value of <code>p</code>.</td>
+	</tr>
+	<tr>
+		<td><code>pt</code></td>
+		<td>Top padding. Default is value of <code>pv</code>.</td>
+	</tr>
+	<tr>
+		<td><code>pl</code></td>
+		<td>Left padding. Default is value of <code>ph</code>.</td>
+	</tr>
+	<tr>
+		<td><code>pr</code></td>
+		<td>Right padding. Default is value of <code>ph</code>.</td>
+	</tr>
+	<tr>
+		<td><code>pb</code></td>
+		<td>Bottom padding. Default is value of <code>pv</code>.</td>
+	</tr>
+	<tr>
+		<td><code>bc</code></td>
+		<td>Background color in <code>#RRGGBB</code> format.</td>
+	</tr>
+	<tr>
+		<td><code>cs</code></td>
+		<td>Color of spaces in <code>#RRGGBB</code> format.</td>
+	</tr>
+	<tr>
+		<td><code>cm</code></td>
+		<td>Color of modules in <code>#RRGGBB</code> format.</td>
+	</tr>
+	<tr>
+		<td><code>tc</code></td>
+		<td>
+			Text color in <code>#RRGGBB</code> format.
+			Applies to linear barcodes only.
+		</td>
+	</tr>
+	<tr>
+		<td><code>tf</code></td>
+		<td>
+			Text font for SVG output.
+			Default is <code>monospace</code>.
+			Applies to linear barcodes only.
+		</td>
+	</tr>
+	<tr>
+		<td><code>ts</code></td>
+		<td>
+			Text size.
+			For SVG output, this is in points and the default is 10.
+			For PNG, GIF, or JPEG output, this is the GD library
+			built-in font number from 1 to 5 and the default is 1.
+			Applies to linear barcodes only.
+		</td>
+	</tr>
+	<tr>
+		<td><code>th</code></td>
+		<td>
+			Distance from text baseline to bottom of modules.
+			Default is 10.
+			Applies to linear barcodes only.
+		</td>
+	</tr>
+	<tr>
+		<td><code>ms</code></td>
+		<td>
+			Module shape.
+			One of:
+			<code>s</code> for square,
+			<code>r</code> for round, or
+			<code>x</code> for X-shaped.
+			Default is <code>s</code>.
+			Applies to matrix barcodes only.
+		</td>
+	</tr>
+	<tr>
+		<td><code>md</code></td>
+		<td>
+			Module density.
+			A number between 0 and 1.
+			Default is 1.
+			Applies to matrix barcodes only.
+		</td>
+	</tr>
+	<tr>
+		<td><code>wq</code></td>
+		<td>
+			Width of quiet area units.
+			Default is 1.
+			Use 0 to suppress quiet area.
+		</td>
+	</tr>
+	<tr>
+		<td><code>wm</code></td>
+		<td>
+			Width of narrow modules and spaces.
+			Default is 1.
+		</td>
+	</tr>
+	<tr>
+		<td><code>ww</code></td>
+		<td>
+			Width of wide modules and spaces.
+			Applies to Code 39, Codabar, and ITF only.
+			Default is 3.
+		</td>
+	</tr>
+	<tr>
+		<td><code>wn</code></td>
+		<td>
+			Width of narrow space between characters.
+			Applies to Code 39 and Codabar only.
+			Default is 1.
+		</td>
+	</tr>
+</table>
+
+</body>
+</html>

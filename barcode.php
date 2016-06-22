@@ -148,10 +148,12 @@ class barcode_generator {
 			(isset($options['w9']) ? (int)$options['w9'] : 1),
 		);
 		$size = $this->dispatch_calculate_size($code, $widths, $options);
-		$scale = (isset($options['sf']) ? (float)$options['sf'] : 1);
+		$dscale = ($code && isset($code['g']) && $code['g'] == 'm') ? 4 : 1;
+		$scale = (isset($options['sf']) ? (float)$options['sf'] : $dscale);
 		$scalex = (isset($options['sx']) ? (float)$options['sx'] : $scale);
 		$scaley = (isset($options['sy']) ? (float)$options['sy'] : $scale);
-		$padding = (isset($options['p']) ? (int)$options['p'] : 10);
+		$dpadding = ($code && isset($code['g']) && $code['g'] == 'm') ? 0 : 10;
+		$padding = (isset($options['p']) ? (int)$options['p'] : $dpadding);
 		$vert = (isset($options['pv']) ? (int)$options['pv'] : $padding);
 		$horiz = (isset($options['ph']) ? (int)$options['ph'] : $padding);
 		$top = (isset($options['pt']) ? (int)$options['pt'] : $vert);

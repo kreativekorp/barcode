@@ -65,13 +65,13 @@ barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
 
 `h` - Height of image. Overrides `sf` or `sy`.
 
-`sf` - Scale factor.
+`sf` - Scale factor. Default is 1 for linear barcodes or 4 for matrix barcodes.
 
 `sx` - Horizontal scale factor. Overrides `sf`.
 
 `sy` - Vertical scale factor. Overrides `sf`.
 
-`p` - Padding. Default is 10.
+`p` - Padding. Default is 10 for linear barcodes or 0 for matrix barcodes.
 
 `pv` - Top and bottom padding. Default is value of `p`.
 

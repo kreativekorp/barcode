@@ -242,6 +242,12 @@ class barcode_generator {
 			case 'qrm'        : return $this->qr_encode($data, 1);
 			case 'qrq'        : return $this->qr_encode($data, 2);
 			case 'qrh'        : return $this->qr_encode($data, 3);
+			case 'dmtx'       : return $this->dmtx_encode($data,false,false);
+			case 'dmtxs'      : return $this->dmtx_encode($data,false,false);
+			case 'dmtxr'      : return $this->dmtx_encode($data, true,false);
+			case 'gs1dmtx'    : return $this->dmtx_encode($data,false, true);
+			case 'gs1dmtxs'   : return $this->dmtx_encode($data,false, true);
+			case 'gs1dmtxr'   : return $this->dmtx_encode($data, true, true);
 		}
 		return null;
 	}
@@ -2358,85 +2364,85 @@ class barcode_generator {
 	/*    [ (0 for numeric, 1 for alpha, 2 for binary, 3 for kanji) ]  */
 	private $qr_capacity = array(
 		array(array(  41,   25,   17,   10), array(  34,   20,   14,    8),
-			  array(  27,   16,   11,    7), array(  17,   10,    7,    4)),
+		      array(  27,   16,   11,    7), array(  17,   10,    7,    4)),
 		array(array(  77,   47,   32,   20), array(  63,   38,   26,   16),
-			  array(  48,   29,   20,   12), array(  34,   20,   14,    8)),
+		      array(  48,   29,   20,   12), array(  34,   20,   14,    8)),
 		array(array( 127,   77,   53,   32), array( 101,   61,   42,   26),
-			  array(  77,   47,   32,   20), array(  58,   35,   24,   15)),
+		      array(  77,   47,   32,   20), array(  58,   35,   24,   15)),
 		array(array( 187,  114,   78,   48), array( 149,   90,   62,   38),
-			  array( 111,   67,   46,   28), array(  82,   50,   34,   21)),
+		      array( 111,   67,   46,   28), array(  82,   50,   34,   21)),
 		array(array( 255,  154,  106,   65), array( 202,  122,   84,   52),
-			  array( 144,   87,   60,   37), array( 106,   64,   44,   27)),
+		      array( 144,   87,   60,   37), array( 106,   64,   44,   27)),
 		array(array( 322,  195,  134,   82), array( 255,  154,  106,   65),
-			  array( 178,  108,   74,   45), array( 139,   84,   58,   36)),
+		      array( 178,  108,   74,   45), array( 139,   84,   58,   36)),
 		array(array( 370,  224,  154,   95), array( 293,  178,  122,   75),
-			  array( 207,  125,   86,   53), array( 154,   93,   64,   39)),
+		      array( 207,  125,   86,   53), array( 154,   93,   64,   39)),
 		array(array( 461,  279,  192,  118), array( 365,  221,  152,   93),
-			  array( 259,  157,  108,   66), array( 202,  122,   84,   52)),
+		      array( 259,  157,  108,   66), array( 202,  122,   84,   52)),
 		array(array( 552,  335,  230,  141), array( 432,  262,  180,  111),
-			  array( 312,  189,  130,   80), array( 235,  143,   98,   60)),
+		      array( 312,  189,  130,   80), array( 235,  143,   98,   60)),
 		array(array( 652,  395,  271,  167), array( 513,  311,  213,  131),
-			  array( 364,  221,  151,   93), array( 288,  174,  119,   74)),
+		      array( 364,  221,  151,   93), array( 288,  174,  119,   74)),
 		array(array( 772,  468,  321,  198), array( 604,  366,  251,  155),
-			  array( 427,  259,  177,  109), array( 331,  200,  137,   85)),
+		      array( 427,  259,  177,  109), array( 331,  200,  137,   85)),
 		array(array( 883,  535,  367,  226), array( 691,  419,  287,  177),
-			  array( 489,  296,  203,  125), array( 374,  227,  155,   96)),
+		      array( 489,  296,  203,  125), array( 374,  227,  155,   96)),
 		array(array(1022,  619,  425,  262), array( 796,  483,  331,  204),
-			  array( 580,  352,  241,  149), array( 427,  259,  177,  109)),
+		      array( 580,  352,  241,  149), array( 427,  259,  177,  109)),
 		array(array(1101,  667,  458,  282), array( 871,  528,  362,  223),
-			  array( 621,  376,  258,  159), array( 468,  283,  194,  120)),
+		      array( 621,  376,  258,  159), array( 468,  283,  194,  120)),
 		array(array(1250,  758,  520,  320), array( 991,  600,  412,  254),
-			  array( 703,  426,  292,  180), array( 530,  321,  220,  136)),
+		      array( 703,  426,  292,  180), array( 530,  321,  220,  136)),
 		array(array(1408,  854,  586,  361), array(1082,  656,  450,  277),
-			  array( 775,  470,  322,  198), array( 602,  365,  250,  154)),
+		      array( 775,  470,  322,  198), array( 602,  365,  250,  154)),
 		array(array(1548,  938,  644,  397), array(1212,  734,  504,  310),
-			  array( 876,  531,  364,  224), array( 674,  408,  280,  173)),
+		      array( 876,  531,  364,  224), array( 674,  408,  280,  173)),
 		array(array(1725, 1046,  718,  442), array(1346,  816,  560,  345),
-			  array( 948,  574,  394,  243), array( 746,  452,  310,  191)),
+		      array( 948,  574,  394,  243), array( 746,  452,  310,  191)),
 		array(array(1903, 1153,  792,  488), array(1500,  909,  624,  384),
-			  array(1063,  644,  442,  272), array( 813,  493,  338,  208)),
+		      array(1063,  644,  442,  272), array( 813,  493,  338,  208)),
 		array(array(2061, 1249,  858,  528), array(1600,  970,  666,  410),
-			  array(1159,  702,  482,  297), array( 919,  557,  382,  235)),
+		      array(1159,  702,  482,  297), array( 919,  557,  382,  235)),
 		array(array(2232, 1352,  929,  572), array(1708, 1035,  711,  438),
-			  array(1224,  742,  509,  314), array( 969,  587,  403,  248)),
+		      array(1224,  742,  509,  314), array( 969,  587,  403,  248)),
 		array(array(2409, 1460, 1003,  618), array(1872, 1134,  779,  480),
-			  array(1358,  823,  565,  348), array(1056,  640,  439,  270)),
+		      array(1358,  823,  565,  348), array(1056,  640,  439,  270)),
 		array(array(2620, 1588, 1091,  672), array(2059, 1248,  857,  528),
-			  array(1468,  890,  611,  376), array(1108,  672,  461,  284)),
+		      array(1468,  890,  611,  376), array(1108,  672,  461,  284)),
 		array(array(2812, 1704, 1171,  721), array(2188, 1326,  911,  561),
-			  array(1588,  963,  661,  407), array(1228,  744,  511,  315)),
+		      array(1588,  963,  661,  407), array(1228,  744,  511,  315)),
 		array(array(3057, 1853, 1273,  784), array(2395, 1451,  997,  614),
-			  array(1718, 1041,  715,  440), array(1286,  779,  535,  330)),
+		      array(1718, 1041,  715,  440), array(1286,  779,  535,  330)),
 		array(array(3283, 1990, 1367,  842), array(2544, 1542, 1059,  652),
-			  array(1804, 1094,  751,  462), array(1425,  864,  593,  365)),
+		      array(1804, 1094,  751,  462), array(1425,  864,  593,  365)),
 		array(array(3517, 2132, 1465,  902), array(2701, 1637, 1125,  692),
-			  array(1933, 1172,  805,  496), array(1501,  910,  625,  385)),
+		      array(1933, 1172,  805,  496), array(1501,  910,  625,  385)),
 		array(array(3669, 2223, 1528,  940), array(2857, 1732, 1190,  732),
-			  array(2085, 1263,  868,  534), array(1581,  958,  658,  405)),
+		      array(2085, 1263,  868,  534), array(1581,  958,  658,  405)),
 		array(array(3909, 2369, 1628, 1002), array(3035, 1839, 1264,  778),
-			  array(2181, 1322,  908,  559), array(1677, 1016,  698,  430)),
+		      array(2181, 1322,  908,  559), array(1677, 1016,  698,  430)),
 		array(array(4158, 2520, 1732, 1066), array(3289, 1994, 1370,  843),
-			  array(2358, 1429,  982,  604), array(1782, 1080,  742,  457)),
+		      array(2358, 1429,  982,  604), array(1782, 1080,  742,  457)),
 		array(array(4417, 2677, 1840, 1132), array(3486, 2113, 1452,  894),
-			  array(2473, 1499, 1030,  634), array(1897, 1150,  790,  486)),
+		      array(2473, 1499, 1030,  634), array(1897, 1150,  790,  486)),
 		array(array(4686, 2840, 1952, 1201), array(3693, 2238, 1538,  947),
-			  array(2670, 1618, 1112,  684), array(2022, 1226,  842,  518)),
+		      array(2670, 1618, 1112,  684), array(2022, 1226,  842,  518)),
 		array(array(4965, 3009, 2068, 1273), array(3909, 2369, 1628, 1002),
-			  array(2805, 1700, 1168,  719), array(2157, 1307,  898,  553)),
+		      array(2805, 1700, 1168,  719), array(2157, 1307,  898,  553)),
 		array(array(5253, 3183, 2188, 1347), array(4134, 2506, 1722, 1060),
-			  array(2949, 1787, 1228,  756), array(2301, 1394,  958,  590)),
+		      array(2949, 1787, 1228,  756), array(2301, 1394,  958,  590)),
 		array(array(5529, 3351, 2303, 1417), array(4343, 2632, 1809, 1113),
-			  array(3081, 1867, 1283,  790), array(2361, 1431,  983,  605)),
+		      array(3081, 1867, 1283,  790), array(2361, 1431,  983,  605)),
 		array(array(5836, 3537, 2431, 1496), array(4588, 2780, 1911, 1176),
-			  array(3244, 1966, 1351,  832), array(2524, 1530, 1051,  647)),
+		      array(3244, 1966, 1351,  832), array(2524, 1530, 1051,  647)),
 		array(array(6153, 3729, 2563, 1577), array(4775, 2894, 1989, 1224),
-			  array(3417, 2071, 1423,  876), array(2625, 1591, 1093,  673)),
+		      array(3417, 2071, 1423,  876), array(2625, 1591, 1093,  673)),
 		array(array(6479, 3927, 2699, 1661), array(5039, 3054, 2099, 1292),
-			  array(3599, 2181, 1499,  923), array(2735, 1658, 1139,  701)),
+		      array(3599, 2181, 1499,  923), array(2735, 1658, 1139,  701)),
 		array(array(6743, 4087, 2809, 1729), array(5313, 3220, 2213, 1362),
-			  array(3791, 2298, 1579,  972), array(2927, 1774, 1219,  750)),
+		      array(3791, 2298, 1579,  972), array(2927, 1774, 1219,  750)),
 		array(array(7089, 4296, 2953, 1817), array(5596, 3391, 2331, 1435),
-			  array(3993, 2420, 1663, 1024), array(3057, 1852, 1273,  784)),
+		      array(3993, 2420, 1663, 1024), array(3057, 1852, 1273,  784)),
 	);
 
 	/*  $qr_ec_params[                                              */
@@ -2859,6 +2865,482 @@ class barcode_generator {
 		array( 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0 ),
 		array( 1, 0, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1 ),
 		array( 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1 ),
+	);
+
+	/* - - - - DATA MATRIX ENCODER - - - - */
+
+	private function dmtx_encode($data, $rect, $fnc1) {
+		list($data, $ec) = $this->dmtx_encode_data($data, $rect, $fnc1);
+		$data = $this->dmtx_encode_ec($data, $ec);
+		list($h, $w, $mtx) = $this->dmtx_create_matrix($ec, $data);
+		return array(
+			'g' => 'm',
+			'q' => array(1, 1, 1, 1),
+			's' => array($w, $h),
+			'b' => $mtx
+		);
+	}
+
+	private function dmtx_encode_data($data, $rect, $fnc1) {
+		/* Convert to data codewords. */
+		$edata = ($fnc1 ? array(232) : array());
+		$length = strlen($data);
+		$offset = 0;
+		while ($offset < $length) {
+			$ch1 = ord(substr($data, $offset, 1));
+			$offset++;
+			if ($ch1 >= 0x30 && $ch1 <= 0x39) {
+				$ch2 = ord(substr($data, $offset, 1));
+				if ($ch2 >= 0x30 && $ch2 <= 0x39) {
+					$offset++;
+					$edata[] = (($ch1 - 0x30) * 10) + ($ch2 - 0x30) + 130;
+				} else {
+					$edata[] = $ch1 + 1;
+				}
+			} else if ($ch1 < 0x80) {
+				$edata[] = $ch1 + 1;
+			} else {
+				$edata[] = 235;
+				$edata[] = ($ch1 - 0x80) + 1;
+			}
+		}
+		/* Add padding. */
+		$length = count($edata);
+		$ec_params = $this->dmtx_detect_version($length, $rect);
+		if ($length > $ec_params[0]) {
+			$length = $ec_params[0];
+			$edata = array_slice($edata, 0, $length);
+			if ($edata[$length - 1] == 235) {
+				$edata[$length - 1] = 129;
+			}
+		} else if ($length < $ec_params[0]) {
+			$length++;
+			$edata[] = 129;
+			while ($length < $ec_params[0]) {
+				$length++;
+				$r = (($length * 149) % 253) + 1;
+				$edata[] = ($r + 129) % 254;
+			}
+		}
+		/* Return. */
+		return array($edata, $ec_params);
+	}
+
+	private function dmtx_detect_version($length, $rect) {
+		for ($i = ($rect ? 24 : 0), $j = ($rect ? 30 : 24); $i < $j; $i++) {
+			if ($length <= $this->dmtx_ec_params[$i][0]) {
+				return $this->dmtx_ec_params[$i];
+			}
+		}
+		return $this->dmtx_ec_params[$j - 1];
+	}
+
+	private function dmtx_encode_ec($data, $ec_params) {
+		$blocks = $this->dmtx_ec_split($data, $ec_params);
+		for ($i = 0, $n = count($blocks); $i < $n; $i++) {
+			$ec_block = $this->dmtx_ec_divide($blocks[$i], $ec_params);
+			$blocks[$i] = array_merge($blocks[$i], $ec_block);
+		}
+		return $this->dmtx_ec_interleave($blocks);
+	}
+
+	private function dmtx_ec_split($data, $ec_params) {
+		$blocks = array();
+		$num_blocks = $ec_params[2] + $ec_params[4];
+		for ($i = 0; $i < $num_blocks; $i++) {
+			$blocks[$i] = array();
+		}
+		for ($i = 0, $length = count($data); $i < $length; $i++) {
+			$blocks[$i % $num_blocks][] = $data[$i];
+		}
+		return $blocks;
+	}
+
+	private function dmtx_ec_divide($data, $ec_params) {
+		$num_data = count($data);
+		$num_error = $ec_params[1];
+		$generator = $this->dmtx_ec_polynomials[$num_error];
+		$message = $data;
+		for ($i = 0; $i < $num_error; $i++) {
+			$message[] = 0;
+		}
+		for ($i = 0; $i < $num_data; $i++) {
+			if ($message[$i]) {
+				$leadterm = $this->dmtx_log[$message[$i]];
+				for ($j = 0; $j <= $num_error; $j++) {
+					$term = ($generator[$j] + $leadterm) % 255;
+					$message[$i + $j] ^= $this->dmtx_exp[$term];
+				}
+			}
+		}
+		return array_slice($message, $num_data, $num_error);
+	}
+
+	private function dmtx_ec_interleave($blocks) {
+		$data = array();
+		$num_blocks = count($blocks);
+		for ($offset = 0; true; $offset++) {
+			$break = true;
+			for ($i = 0; $i < $num_blocks; $i++) {
+				if (isset($blocks[$i][$offset])) {
+					$data[] = $blocks[$i][$offset];
+					$break = false;
+				}
+			}
+			if ($break) break;
+		}
+		return $data;
+	}
+
+	private function dmtx_create_matrix($ec_params, $data) {
+		/* Create matrix. */
+		$rheight = $ec_params[8] + 2;
+		$rwidth = $ec_params[9] + 2;
+		$height = $ec_params[6] * $rheight;
+		$width = $ec_params[7] * $rwidth;
+		$bitmap = array();
+		for ($y = 0; $y < $height; $y++) {
+			$row = array();
+			for ($x = 0; $x < $width; $x++) {
+				$row[] = ((
+					((($x + $y) % 2) == 0) ||
+					(($x % $rwidth) == 0) ||
+					(($y % $rheight) == ($rheight - 1))
+				) ? 1 : 0);
+			}
+			$bitmap[] = $row;
+		}
+		/* Create data region. */
+		$rows = $ec_params[6] * $ec_params[8];
+		$cols = $ec_params[7] * $ec_params[9];
+		$matrix = array();
+		for ($y = 0; $y < $rows; $y++) {
+			$row = array();
+			for ($x = 0; $x < $width; $x++) {
+				$row[] = null;
+			}
+			$matrix[] = $row;
+		}
+		$this->dmtx_place_data($matrix, $rows, $cols, $data);
+		/* Copy into matrix. */
+		for ($yy = 0; $yy < $ec_params[6]; $yy++) {
+			for ($xx = 0; $xx < $ec_params[7]; $xx++) {
+				for ($y = 0; $y < $ec_params[8]; $y++) {
+					for ($x = 0; $x < $ec_params[9]; $x++) {
+						$row = $yy * $ec_params[8] + $y;
+						$col = $xx * $ec_params[9] + $x;
+						$b = $matrix[$row][$col];
+						if (is_null($b)) continue;
+						$row = $yy * $rheight + $y + 1;
+						$col = $xx * $rwidth + $x + 1;
+						$bitmap[$row][$col] = $b;
+					}
+				}
+			}
+		}
+		/* Return matrix. */
+		return array($height, $width, $bitmap);
+	}
+
+	private function dmtx_place_data(&$mtx, $rows, $cols, $data) {
+		$row = 4;
+		$col = 0;
+		$offset = 0;
+		$length = count($data);
+		while (($row < $rows || $col < $cols) && $offset < $length) {
+			/* Corner cases. Literally. */
+			if ($row == $rows && $col == 0) {
+				$this->dmtx_place_1($mtx, $rows, $cols, $data[$offset++]);
+			} else if ($row == $rows - 2 && $col == 0 && $cols % 4 != 0) {
+				$this->dmtx_place_2($mtx, $rows, $cols, $data[$offset++]);
+			} else if ($row == $rows - 2 && $col == 0 && $cols % 8 == 4) {
+				$this->dmtx_place_3($mtx, $rows, $cols, $data[$offset++]);
+			} else if ($row == $rows + 4 && $col == 2 && $cols % 8 == 0) {
+				$this->dmtx_place_4($mtx, $rows, $cols, $data[$offset++]);
+			}
+			/* Up and to the right. */
+			while ($row >= 0 && $col < $cols && $offset < $length) {
+				if ($row < $rows && $col >= 0 && is_null($mtx[$row][$col])) {
+					$b = $data[$offset++];
+					$this->dmtx_place_0($mtx, $rows, $cols, $row, $col, $b);
+				}
+				$row -= 2;
+				$col += 2;
+			}
+			$row += 1;
+			$col += 3;
+			/* Down and to the left. */
+			while ($row < $rows && $col >= 0 && $offset < $length) {
+				if ($row >= 0 && $col < $cols && is_null($mtx[$row][$col])) {
+					$b = $data[$offset++];
+					$this->dmtx_place_0($mtx, $rows, $cols, $row, $col, $b);
+				}
+				$row += 2;
+				$col -= 2;
+			}
+			$row += 3;
+			$col += 1;
+		}
+	}
+
+	private function dmtx_place_1(&$matrix, $rows, $cols, $b) {
+		$matrix[$rows - 1][0] = (($b & 0x80) ? 1 : 0);
+		$matrix[$rows - 1][1] = (($b & 0x40) ? 1 : 0);
+		$matrix[$rows - 1][2] = (($b & 0x20) ? 1 : 0);
+		$matrix[0][$cols - 2] = (($b & 0x10) ? 1 : 0);
+		$matrix[0][$cols - 1] = (($b & 0x08) ? 1 : 0);
+		$matrix[1][$cols - 1] = (($b & 0x04) ? 1 : 0);
+		$matrix[2][$cols - 1] = (($b & 0x02) ? 1 : 0);
+		$matrix[3][$cols - 1] = (($b & 0x01) ? 1 : 0);
+	}
+
+	private function dmtx_place_2(&$matrix, $rows, $cols, $b) {
+		$matrix[$rows - 3][0] = (($b & 0x80) ? 1 : 0);
+		$matrix[$rows - 2][0] = (($b & 0x40) ? 1 : 0);
+		$matrix[$rows - 1][0] = (($b & 0x20) ? 1 : 0);
+		$matrix[0][$cols - 4] = (($b & 0x10) ? 1 : 0);
+		$matrix[0][$cols - 3] = (($b & 0x08) ? 1 : 0);
+		$matrix[0][$cols - 2] = (($b & 0x04) ? 1 : 0);
+		$matrix[0][$cols - 1] = (($b & 0x02) ? 1 : 0);
+		$matrix[1][$cols - 1] = (($b & 0x01) ? 1 : 0);
+	}
+
+	private function dmtx_place_3(&$matrix, $rows, $cols, $b) {
+		$matrix[$rows - 3][0] = (($b & 0x80) ? 1 : 0);
+		$matrix[$rows - 2][0] = (($b & 0x40) ? 1 : 0);
+		$matrix[$rows - 1][0] = (($b & 0x20) ? 1 : 0);
+		$matrix[0][$cols - 2] = (($b & 0x10) ? 1 : 0);
+		$matrix[0][$cols - 1] = (($b & 0x08) ? 1 : 0);
+		$matrix[1][$cols - 1] = (($b & 0x04) ? 1 : 0);
+		$matrix[2][$cols - 1] = (($b & 0x02) ? 1 : 0);
+		$matrix[3][$cols - 1] = (($b & 0x01) ? 1 : 0);
+	}
+
+	private function dmtx_place_4(&$matrix, $rows, $cols, $b) {
+		$matrix[$rows - 1][        0] = (($b & 0x80) ? 1 : 0);
+		$matrix[$rows - 1][$cols - 1] = (($b & 0x40) ? 1 : 0);
+		$matrix[        0][$cols - 3] = (($b & 0x20) ? 1 : 0);
+		$matrix[        0][$cols - 2] = (($b & 0x10) ? 1 : 0);
+		$matrix[        0][$cols - 1] = (($b & 0x08) ? 1 : 0);
+		$matrix[        1][$cols - 3] = (($b & 0x04) ? 1 : 0);
+		$matrix[        1][$cols - 2] = (($b & 0x02) ? 1 : 0);
+		$matrix[        1][$cols - 1] = (($b & 0x01) ? 1 : 0);
+	}
+
+	private function dmtx_place_0(&$matrix, $rows, $cols, $row, $col, $b) {
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-2, $col-2, $b & 0x80);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-2, $col-1, $b & 0x40);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-1, $col-2, $b & 0x20);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-1, $col-1, $b & 0x10);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-1, $col-0, $b & 0x08);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-0, $col-2, $b & 0x04);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-0, $col-1, $b & 0x02);
+		$this->dmtx_place_b($matrix, $rows, $cols, $row-0, $col-0, $b & 0x01);
+	}
+
+	private function dmtx_place_b(&$matrix, $rows, $cols, $row, $col, $b) {
+		if ($row < 0) {
+			$row += $rows;
+			$col += (4 - (($rows + 4) % 8));
+		}
+		if ($col < 0) {
+			$col += $cols;
+			$row += (4 - (($cols + 4) % 8));
+		}
+		$matrix[$row][$col] = ($b ? 1 : 0);
+	}
+
+	/*  $dmtx_ec_params[] = array(                             */
+	/*    total number of data codewords,                      */
+	/*    number of error correction codewords per block,      */
+	/*    number of blocks in first group,                     */
+	/*    number of data codewords per block in first group,   */
+	/*    number of blocks in second group,                    */
+	/*    number of data codewords per block in second group,  */
+	/*    number of data regions (vertical),                   */
+	/*    number of data regions (horizontal),                 */
+	/*    number of rows per data region,                      */
+	/*    number of columns per data region                    */
+	/*  );                                                     */
+	private $dmtx_ec_params = array(
+		array(    3,  5, 1,   3, 0,   0, 1, 1,  8,  8 ),
+		array(    5,  7, 1,   5, 0,   0, 1, 1, 10, 10 ),
+		array(    8, 10, 1,   8, 0,   0, 1, 1, 12, 12 ),
+		array(   12, 12, 1,  12, 0,   0, 1, 1, 14, 14 ),
+		array(   18, 14, 1,  18, 0,   0, 1, 1, 16, 16 ),
+		array(   22, 18, 1,  22, 0,   0, 1, 1, 18, 18 ),
+		array(   30, 20, 1,  30, 0,   0, 1, 1, 20, 20 ),
+		array(   36, 24, 1,  36, 0,   0, 1, 1, 22, 22 ),
+		array(   44, 28, 1,  44, 0,   0, 1, 1, 24, 24 ),
+		array(   62, 36, 1,  62, 0,   0, 2, 2, 14, 14 ),
+		array(   86, 42, 1,  86, 0,   0, 2, 2, 16, 16 ),
+		array(  114, 48, 1, 114, 0,   0, 2, 2, 18, 18 ),
+		array(  144, 56, 1, 144, 0,   0, 2, 2, 20, 20 ),
+		array(  174, 68, 1, 174, 0,   0, 2, 2, 22, 22 ),
+		array(  204, 42, 2, 102, 0,   0, 2, 2, 24, 24 ),
+		array(  280, 56, 2, 140, 0,   0, 4, 4, 14, 14 ),
+		array(  368, 36, 4,  92, 0,   0, 4, 4, 16, 16 ),
+		array(  456, 48, 4, 114, 0,   0, 4, 4, 18, 18 ),
+		array(  576, 56, 4, 144, 0,   0, 4, 4, 20, 20 ),
+		array(  696, 68, 4, 174, 0,   0, 4, 4, 22, 22 ),
+		array(  816, 56, 6, 136, 0,   0, 4, 4, 24, 24 ),
+		array( 1050, 68, 6, 175, 0,   0, 6, 6, 18, 18 ),
+		array( 1304, 62, 8, 163, 0,   0, 6, 6, 20, 20 ),
+		array( 1558, 62, 8, 156, 2, 155, 6, 6, 22, 22 ),
+		array(    5,  7, 1,   5, 0,   0, 1, 1,  6, 16 ),
+		array(   10, 11, 1,  10, 0,   0, 1, 2,  6, 14 ),
+		array(   16, 14, 1,  16, 0,   0, 1, 1, 10, 24 ),
+		array(   22, 18, 1,  22, 0,   0, 1, 2, 10, 16 ),
+		array(   32, 24, 1,  32, 0,   0, 1, 2, 14, 16 ),
+		array(   49, 28, 1,  49, 0,   0, 1, 2, 14, 22 ),
+	);
+
+	private $dmtx_ec_polynomials = array(
+		5 => array(
+			0, 235, 207, 210, 244, 15
+		),
+		7 => array(
+			0, 177, 30, 214, 218, 42, 197, 28
+		),
+		10 => array(
+			0, 199, 50, 150, 120, 237, 131, 172, 83, 243, 55
+		),
+		11 => array(
+			0, 213, 173, 212, 156, 103, 109, 174, 242, 215, 12, 66
+		),
+		12 => array(
+			0, 168, 142, 35, 173, 94, 185, 107, 199, 74, 194, 233, 78
+		),
+		14 => array(
+			0, 83, 171, 33, 39, 8, 12, 248,
+			27, 38, 84, 93, 246, 173, 105
+		),
+		18 => array(
+			0, 164, 9, 244, 69, 177, 163, 161, 231, 94,
+			250, 199, 220, 253, 164, 103, 142, 61, 171
+		),
+		20 => array(
+			0, 127, 33, 146, 23, 79, 25, 193, 122, 209, 233,
+			230, 164, 1, 109, 184, 149, 38, 201, 61, 210
+		),
+		24 => array(
+			0, 65, 141, 245, 31, 183, 242, 236, 177, 127, 225, 106,
+			22, 131, 20, 202, 22, 106, 137, 103, 231, 215, 136, 85, 45
+		),
+		28 => array(
+			0, 150, 32, 109, 149, 239, 213, 198, 48, 94,
+			50, 12, 195, 167, 130, 196, 253, 99, 166, 239,
+			222, 146, 190, 245, 184, 173, 125, 17, 151
+		),
+		36 => array(
+			0, 57, 86, 187, 69, 140, 153, 31, 66, 135, 67, 248, 84,
+			90, 81, 219, 197, 2, 1, 39, 16, 75, 229, 20, 51, 252,
+			108, 213, 181, 183, 87, 111, 77, 232, 168, 176, 156
+		),
+		42 => array(
+			0, 225, 38, 225, 148, 192, 254, 141, 11, 82, 237,
+			81, 24, 13, 122, 0, 106, 167, 13, 207, 160, 88,
+			203, 38, 142, 84, 66, 3, 168, 102, 156, 1, 200,
+			88, 60, 233, 134, 115, 114, 234, 90, 65, 138
+		),
+		48 => array(
+			0, 114, 69, 122, 30, 94, 11, 66, 230, 132, 73, 145, 137,
+			135, 79, 214, 33, 12, 220, 142, 213, 136, 124, 215, 166,
+			9, 222, 28, 154, 132, 4, 100, 170, 145, 59, 164, 215, 17,
+			249, 102, 249, 134, 128, 5, 245, 131, 127, 221, 156
+		),
+		56 => array(
+			0, 29, 179, 99, 149, 159, 72, 125, 22, 55, 60, 217,
+			176, 156, 90, 43, 80, 251, 235, 128, 169, 254, 134,
+			249, 42, 121, 118, 72, 128, 129, 232, 37, 15, 24, 221,
+			143, 115, 131, 40, 113, 254, 19, 123, 246, 68, 166,
+			66, 118, 142, 47, 51, 195, 242, 249, 131, 38, 66
+		),
+		62 => array(
+			0, 182, 133, 162, 126, 236, 58, 172, 163, 53, 121, 159, 2,
+			166, 137, 234, 158, 195, 164, 77, 228, 226, 145, 91, 180,
+			232, 23, 241, 132, 135, 206, 184, 14, 6, 66, 238, 83, 100,
+			111, 85, 202, 91, 156, 68, 218, 57, 83, 222, 188, 25, 179,
+			144, 169, 164, 82, 154, 103, 89, 42, 141, 175, 32, 168
+		),
+		68 => array(
+			0, 33, 79, 190, 245, 91, 221, 233, 25, 24, 6, 144,
+			151, 121, 186, 140, 127, 45, 153, 250, 183, 70, 131,
+			198, 17, 89, 245, 121, 51, 140, 252, 203, 82, 83, 233,
+			152, 220, 155, 18, 230, 210, 94, 32, 200, 197, 192,
+			194, 202, 129, 10, 237, 198, 94, 176, 36, 40, 139,
+			201, 132, 219, 34, 56, 113, 52, 20, 34, 247, 15, 51
+		),
+	);
+
+	private $dmtx_log = array(
+		  0,   0,   1, 240,   2, 225, 241,  53,
+		  3,  38, 226, 133, 242,  43,  54, 210,
+		  4, 195,  39, 114, 227, 106, 134,  28,
+		243, 140,  44,  23,  55, 118, 211, 234,
+		  5, 219, 196,  96,  40, 222, 115, 103,
+		228,  78, 107, 125, 135,   8,  29, 162,
+		244, 186, 141, 180,  45,  99,  24,  49,
+		 56,  13, 119, 153, 212, 199, 235,  91,
+		  6,  76, 220, 217, 197,  11,  97, 184,
+		 41,  36, 223, 253, 116, 138, 104, 193,
+		229,  86,  79, 171, 108, 165, 126, 145,
+		136,  34,   9,  74,  30,  32, 163,  84,
+		245, 173, 187, 204, 142,  81, 181, 190,
+		 46,  88, 100, 159,  25, 231,  50, 207,
+		 57, 147,  14,  67, 120, 128, 154, 248,
+		213, 167, 200,  63, 236, 110,  92, 176,
+		  7, 161,  77, 124, 221, 102, 218,  95,
+		198,  90,  12, 152,  98,  48, 185, 179,
+		 42, 209,  37, 132, 224,  52, 254, 239,
+		117, 233, 139,  22, 105,  27, 194, 113,
+		230, 206,  87, 158,  80, 189, 172, 203,
+		109, 175, 166,  62, 127, 247, 146,  66,
+		137, 192,  35, 252,  10, 183,  75, 216,
+		 31,  83,  33,  73, 164, 144,  85, 170,
+		246,  65, 174,  61, 188, 202, 205, 157,
+		143, 169,  82,  72, 182, 215, 191, 251,
+		 47, 178,  89, 151, 101,  94, 160, 123,
+		 26, 112, 232,  21,  51, 238, 208, 131,
+		 58,  69, 148,  18,  15,  16,  68,  17,
+		121, 149, 129,  19, 155,  59, 249,  70,
+		214, 250, 168,  71, 201, 156,  64,  60,
+		237, 130, 111,  20,  93, 122, 177, 150,
+	);
+
+	private $dmtx_exp = array(
+		  1,   2,   4,   8,  16,  32,  64, 128,
+		 45,  90, 180,  69, 138,  57, 114, 228,
+		229, 231, 227, 235, 251, 219, 155,  27,
+		 54, 108, 216, 157,  23,  46,  92, 184,
+		 93, 186,  89, 178,  73, 146,   9,  18,
+		 36,  72, 144,  13,  26,  52, 104, 208,
+		141,  55, 110, 220, 149,   7,  14,  28,
+		 56, 112, 224, 237, 247, 195, 171, 123,
+		246, 193, 175, 115, 230, 225, 239, 243,
+		203, 187,  91, 182,  65, 130,  41,  82,
+		164, 101, 202, 185,  95, 190,  81, 162,
+		105, 210, 137,  63, 126, 252, 213, 135,
+		 35,  70, 140,  53, 106, 212, 133,  39,
+		 78, 156,  21,  42,  84, 168, 125, 250,
+		217, 159,  19,  38,  76, 152,  29,  58,
+		116, 232, 253, 215, 131,  43,  86, 172,
+		117, 234, 249, 223, 147,  11,  22,  44,
+		 88, 176,  77, 154,  25,  50, 100, 200,
+		189,  87, 174, 113, 226, 233, 255, 211,
+		139,  59, 118, 236, 245, 199, 163, 107,
+		214, 129,  47,  94, 188,  85, 170, 121,
+		242, 201, 191,  83, 166,  97, 194, 169,
+		127, 254, 209, 143,  51, 102, 204, 181,
+		 71, 142,  49,  98, 196, 165, 103, 206,
+		177,  79, 158,  17,  34,  68, 136,  61,
+		122, 244, 197, 167,  99, 198, 161, 111,
+		222, 145,  15,  30,  60, 120, 240, 205,
+		183,  67, 134,  33,  66, 132,  37,  74,
+		148,   5,  10,  20,  40,  80, 160, 109,
+		218, 153,  31,  62, 124, 248, 221, 151,
+		  3,   6,  12,  24,  48,  96, 192, 173,
+		119, 238, 241, 207, 179,  75, 150,   1,
 	);
 
 }

@@ -3,7 +3,7 @@
 ### Generate barcodes from a single PHP file. MIT license.
 
   * Output to PNG, GIF, JPEG, or SVG.
-  * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, Codabar, ITF, and QR.
+  * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, Codabar, ITF, QR Code, and Data Matrix.
 
 Use from a PHP script:
 
@@ -50,12 +50,12 @@ barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
 
 `s` - Symbology (type of barcode). One of:
 ```
-    upc-a     code-39         qr
-    upc-e     code-39-ascii   qr-l
-    ean-13    code-93         qr-m
-    ean-8     code-93-ascii   qr-q
-    ean-128   code-128        qr-h
-              codabar
+    upc-a     code-39         qr     dmtx
+    upc-e     code-39-ascii   qr-l   dmtx-s
+    ean-13    code-93         qr-m   dmtx-r
+    ean-8     code-93-ascii   qr-q   gs1-dmtx
+    ean-128   code-128        qr-h   gs1-dmtx-s
+              codabar                gs1-dmtx-r
               itf
 ```
 

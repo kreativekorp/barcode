@@ -110,3 +110,5 @@ barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
 `ww` - Width of wide modules and spaces. Applies to Code 39, Codabar, and ITF only. Default is 3.
 
 `wn` - Width of narrow space between characters. Applies to Code 39 and Codabar only. Default is 1.
+
+`separator` - Show the `>` seperator for EAN codes. Applies to EAN-13. Default is 0.

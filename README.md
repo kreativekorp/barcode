@@ -50,13 +50,13 @@ barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
 
 `s` - Symbology (type of barcode). One of:
 ```
-    upc-a     code-39         qr     dmtx
-    upc-e     code-39-ascii   qr-l   dmtx-s
-    ean-13    code-93         qr-m   dmtx-r
-    ean-8     code-93-ascii   qr-q   gs1-dmtx
-    ean-128   code-128        qr-h   gs1-dmtx-s
-              codabar                gs1-dmtx-r
-              itf
+    upc-a          code-39         qr     dmtx
+    upc-e          code-39-ascii   qr-l   dmtx-s
+    ean-8          code-93         qr-m   dmtx-r
+    ean-13         code-93-ascii   qr-q   gs1-dmtx
+    ean-13-pad     code-128        qr-h   gs1-dmtx-s
+    ean-13-nopad   codabar                gs1-dmtx-r
+    ean-128        itf
 ```
 
 `d` - Data. For UPC or EAN, use `*` for missing digit. For Codabar, use `ABCD` or `ENT*` for start and stop characters. For QR, encode in Shift-JIS for kanji mode.

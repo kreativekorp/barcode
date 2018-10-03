@@ -4,7 +4,7 @@
 
 barcode.php - Generate barcodes from a single PHP file. MIT license.
 
-Copyright (c) 2016 Kreative Software.
+Copyright (c) 2016-2018 Kreative Software.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -216,7 +216,9 @@ class barcode_generator {
 		switch (strtolower(preg_replace('/[^A-Za-z0-9]/', '', $symbology))) {
 			case 'upca'       : return $this->upc_a_encode($data);
 			case 'upce'       : return $this->upc_e_encode($data);
-			case 'ean13'      : return $this->ean_13_encode($data);
+			case 'ean13nopad' : return $this->ean_13_encode($data, ' ');
+			case 'ean13pad'   : return $this->ean_13_encode($data, '>');
+			case 'ean13'      : return $this->ean_13_encode($data, '>');
 			case 'ean8'       : return $this->ean_8_encode($data);
 			case 'code39'     : return $this->code_39_encode($data);
 			case 'code39ascii': return $this->code_39_ascii_encode($data);
@@ -720,7 +722,7 @@ class barcode_generator {
 		return array('g' => 'l', 'b' => $blocks);
 	}
 
-	private function ean_13_encode($data) {
+	private function ean_13_encode($data, $pad) {
 		$data = $this->ean_13_normalize($data);
 		$blocks = array();
 		/* Quiet zone, start, first digit (as parity). */
@@ -788,7 +790,7 @@ class barcode_generator {
 		);
 		$blocks[] = array(
 			'm' => array(array(0, 9, 0)),
-			'l' => array('>', 0.5, 2/3)
+			'l' => array($pad, 0.5, 2/3)
 		);
 		/* Return code. */
 		return array('g' => 'l', 'b' => $blocks);

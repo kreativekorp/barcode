@@ -1,0 +1,19 @@
+{
+    "name": "kreativekorp/barcode",
+    "type": "library",
+    "description": "Generate barcodes from a single PHP file.",
+    "homepage": "https://github.com/kreativekorp/barcode/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [
+        {
+            "name": "Kreative Software",
+            "email": "support@kreativekorp.com",
+            "homepage": "http://www.kreativekorp.com"
+        }
+    ],
+    "autoload": {
+        "classmap": ["barcode.php"]
+    }
+}

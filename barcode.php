@@ -1414,7 +1414,8 @@ class barcode_generator {
 
 	private function code_128_encode($data, $dstate, $fnc1) {
 		$data = preg_replace('/[\x80-\xFF]/', '', $data);
-		$label = preg_replace('/[\x00-\x1F\x7F]/', ' ', $data);
+		$labelData = str_replace('\FNC1', '', $data);
+		$label = preg_replace('/[\x00-\x1F\x7F]/', ' ', $labelData);
 		$chars = $this->code_128_normalize($data, $dstate, $fnc1);
 		$checksum = $chars[0] % 103;
 		for ($i = 1, $n = count($chars); $i < $n; $i++) {
@@ -1437,6 +1438,7 @@ class barcode_generator {
 	}
 
 	private function code_128_normalize($data, $dstate, $fnc1) {
+		$data = str_replace('\FNC1', chr(29), $data);
 		$detectcba = '/(^[0-9]{4,}|^[0-9]{2}$)|([\x60-\x7F])|([\x00-\x1F])/';
 		$detectc = '/(^[0-9]{6,}|^[0-9]{4,}$)/';
 		$detectba = '/([\x60-\x7F])|([\x00-\x1F])/';
@@ -2885,6 +2887,7 @@ class barcode_generator {
 
 	private function dmtx_encode_data($data, $rect, $fnc1) {
 		/* Convert to data codewords. */
+		$data = str_replace('\FNC1', chr(29), $data);
 		$edata = ($fnc1 ? array(232) : array());
 		$length = strlen($data);
 		$offset = 0;

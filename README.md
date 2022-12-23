@@ -120,7 +120,7 @@ barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
 - if needed, you can replace `\FNC1` keyword with `yourKeyword` in barcode.php file, the functionality will remain. Do not forget to replace all occurrences.
 - available in barcode symbologies:
 ```
-    code-128     ean-128      dmtx         dmtx-s
-    dmtx-r       gs1-dmtx     gs1-dmtx-s   gs1-dmtx-r
+    ean-128     gs1-dmtx-s    gs1-qr-l   gs1-qr-q
+    gs1-dmtx    gs1-dmtx-r    gs1-qr-m   gs1-qr-h
 ```
 - Do not confuse this with &lt;FNC1&gt; character. Initially, it was intended to use the &lt;FNC1&gt; character as a separator character, but since according to [this stackoverflow answer](https://stackoverflow.com/questions/31318648/what-is-the-actual-hex-binary-value-of-the-gs1-fnc1-character/31322815#31322815) by Terry Burton, FNC1 is a non-data character that requires special treatment. And I dont want to fizzle around this when it is not necessary. Instead, I decided to use the &lt;GS&gt; character. According to the [GS1 General Specifications](https://www.gs1.org/standards/barcodes-epcrfid-id-keys/gs1-general-specifications), the &lt;FNC1&gt; and &lt;GS&gt; characters are in the role of a separator character substitutes. The `\FNC1` remained as a keyword for its uniqueness. If you need, you can replace it with `\GS` or any other keyword you consider unique.

@@ -3,7 +3,7 @@
 ### Generate barcodes from a single PHP file. MIT license.
 
   * Output to PNG, GIF, JPEG, or SVG.
-  * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, GS1 128, Codabar, ITF, QR Code, DataMatrix and GS1 DataMatrix.
+  * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, GS1 128, Codabar, ITF, QR Code, GS1 QR Code, DataMatrix and GS1 DataMatrix.
 
 Use from a PHP script:
 
@@ -50,13 +50,13 @@ barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
 
 `s` - Symbology (type of barcode). One of:
 ```
-    upc-a          code-39         qr     dmtx
-    upc-e          code-39-ascii   qr-l   dmtx-s
-    ean-8          code-93         qr-m   dmtx-r
-    ean-13         code-93-ascii   qr-q   gs1-dmtx
-    ean-13-pad     code-128        qr-h   gs1-dmtx-s
-    ean-13-nopad   codabar                gs1-dmtx-r
-    ean-128        itf
+    upc-a          code-39         qr         gs1-qr-q     gs1-dmtx-r
+    upc-e          code-39-ascii   qr-l       gs1-qr-h
+    ean-8          code-93         qr-m       dmtx
+    ean-13         code-93-ascii   qr-q       dmtx-s
+    ean-13-pad     code-128        qr-h       dmtx-r
+    ean-13-nopad   codabar         gs1-qr-l   gs1-dmtx
+    ean-128        itf             gs1-qr-m   gs1-dmtx-s
 ```
 
 `d` - Data. For UPC or EAN, use `*` for missing digit. For Codabar, use `ABCD` or `ENT*` for start and stop characters. For QR, encode in Shift-JIS for kanji mode.

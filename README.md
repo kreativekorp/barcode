@@ -13,16 +13,28 @@ include 'barcode.php';
 $generator = new barcode_generator();
 
 /* Output directly to standard output. */
+header("Content-Type: image/$format");
 $generator->output_image($format, $symbology, $data, $options);
 
-/* Create bitmap image. */
+/* Create bitmap image and write to standard output. */
+header('Content-Type: image/png');
 $image = $generator->render_image($symbology, $data, $options);
 imagepng($image);
 imagedestroy($image);
 
-/* Generate SVG markup. */
+/* Create bitmap image and write to file. */
+$image = $generator->render_image($symbology, $data, $options);
+imagepng($image, $filename);
+imagedestroy($image);
+
+/* Generate SVG markup and write to standard output. */
+header('Content-Type: image/svg+xml');
 $svg = $generator->render_svg($symbology, $data, $options);
 echo $svg;
+
+/* Generate SVG markup and write to file. */
+$svg = $generator->render_svg($symbology, $data, $options);
+file_put_contents($filename, $svg);
 ```
 
 Use with GET or POST:

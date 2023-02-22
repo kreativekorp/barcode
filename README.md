@@ -5,7 +5,22 @@
   * Output to PNG, GIF, JPEG, or SVG.
   * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, Codabar, ITF, QR Code, and Data Matrix.
 
-Use from a PHP script:
+### Use directly as a PHP script with GET or POST:
+
+```
+barcode.php?f={format}&s={symbology}&d={data}&{options}
+```
+
+e.g.
+
+```
+barcode.php?f=png&s=upc-e&d=06543217
+barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
+```
+
+**When using this method, you must escape non-alphanumeric characters with URL encoding, for example `%26` for `&` or `%2F` for `?`.**
+
+### Or use as a library from another PHP script:
 
 ```
 include 'barcode.php';
@@ -37,20 +52,9 @@ $svg = $generator->render_svg($symbology, $data, $options);
 file_put_contents($filename, $svg);
 ```
 
-Use with GET or POST:
+**When using this method, you must NOT use URL encoding.**
 
-```
-barcode.php?f={format}&s={symbology}&d={data}&{options}
-```
-
-e.g.
-
-```
-barcode.php?f=png&s=upc-e&d=06543217
-barcode.php?f=svg&s=qr&d=HELLO%20WORLD&sf=8&ms=r&md=0.8
-```
-
-#### Options:
+### Options:
 
 `f` - Format. One of:
 ```

@@ -3,7 +3,7 @@
 ### Generate barcodes from a single PHP file. MIT license.
 
   * Output to PNG, GIF, JPEG, or SVG.
-  * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, Codabar, ITF, QR Code, and Data Matrix.
+  * Generates UPC-A, UPC-E, EAN-13, EAN-8, Code 39, Code 93, Code 128, GS1 128, Codabar, ITF, QR Code, GS1 QR Code, DataMatrix and GS1 DataMatrix.
 
 ### Use directly as a PHP script with GET or POST:
 
@@ -66,13 +66,13 @@ file_put_contents($filename, $svg);
 
 `s` - Symbology (type of barcode). One of:
 ```
-    upc-a          code-39         qr     dmtx
-    upc-e          code-39-ascii   qr-l   dmtx-s
-    ean-8          code-93         qr-m   dmtx-r
-    ean-13         code-93-ascii   qr-q   gs1-dmtx
-    ean-13-pad     code-128        qr-h   gs1-dmtx-s
-    ean-13-nopad   codabar                gs1-dmtx-r
-    ean-128        itf
+    upc-a          code-39         qr         gs1-qr-q     gs1-dmtx-r
+    upc-e          code-39-ascii   qr-l       gs1-qr-h
+    ean-8          code-93         qr-m       dmtx
+    ean-13         code-93-ascii   qr-q       dmtx-s
+    ean-13-pad     code-128        qr-h       dmtx-r
+    ean-13-nopad   codabar         gs1-qr-l   gs1-dmtx
+    ean-128        itf             gs1-qr-m   gs1-dmtx-s
 ```
 
 `d` - Data. For UPC or EAN, use `*` for missing digit. For Codabar, use `ABCD` or `ENT*` for start and stop characters. For QR, encode in Shift-JIS for kanji mode.
@@ -126,3 +126,17 @@ file_put_contents($filename, $svg);
 `ww` - Width of wide modules and spaces. Applies to Code 39, Codabar, and ITF only. Default is 3.
 
 `wn` - Width of narrow space between characters. Applies to Code 39 and Codabar only. Default is 1.
+
+#### Keywords:
+
+`\FNC1`
+- used in `d` - Data option as a part of the data string.
+- when used, it is replaced with a Group separator &lt;GS&gt; ASCII char 29 in encoded data string.
+- it should be used to terminate variable length GS1 Application Identifiers in GS1 128 and GS1 DataMatrix barcodes.
+- if needed, you can replace `\FNC1` keyword with `yourKeyword` in barcode.php file, the functionality will remain. Do not forget to replace all occurrences.
+- available in barcode symbologies:
+```
+    ean-128     gs1-dmtx-s    gs1-qr-l   gs1-qr-q
+    gs1-dmtx    gs1-dmtx-r    gs1-qr-m   gs1-qr-h
+```
+- Do not confuse this with &lt;FNC1&gt; character. Initially, it was intended to use the &lt;FNC1&gt; character as a separator character, but since according to [this stackoverflow answer](https://stackoverflow.com/questions/31318648/what-is-the-actual-hex-binary-value-of-the-gs1-fnc1-character/31322815#31322815) by Terry Burton, FNC1 is a non-data character that requires special treatment. And I dont want to fizzle around this when it is not necessary. Instead, I decided to use the &lt;GS&gt; character. According to the [GS1 General Specifications](https://www.gs1.org/standards/barcodes-epcrfid-id-keys/gs1-general-specifications), the &lt;FNC1&gt; and &lt;GS&gt; characters are in the role of a separator character substitutes. The `\FNC1` remained as a keyword for its uniqueness. If you need, you can replace it with `\GS` or any other keyword you consider unique.

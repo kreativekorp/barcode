@@ -239,11 +239,15 @@ class barcode_generator {
 			case 'codabar'    : return $this->codabar_encode($data);
 			case 'itf'        : return $this->itf_encode($data);
 			case 'itf14'      : return $this->itf_encode($data);
-			case 'qr'         : return $this->qr_encode($data, 0);
-			case 'qrl'        : return $this->qr_encode($data, 0);
-			case 'qrm'        : return $this->qr_encode($data, 1);
-			case 'qrq'        : return $this->qr_encode($data, 2);
-			case 'qrh'        : return $this->qr_encode($data, 3);
+			case 'qr'         : return $this->qr_encode($data, 0, false);
+			case 'qrl'        : return $this->qr_encode($data, 0, false);
+			case 'qrm'        : return $this->qr_encode($data, 1, false);
+			case 'qrq'        : return $this->qr_encode($data, 2, false);
+			case 'qrh'        : return $this->qr_encode($data, 3, false);
+			case 'gs1qrl'      : return $this->qr_encode($data, 0, true);
+			case 'gs1qrm'      : return $this->qr_encode($data, 1, true);
+			case 'gs1qrq'      : return $this->qr_encode($data, 2, true);
+			case 'gs1qrh'      : return $this->qr_encode($data, 3, true);
 			case 'dmtx'       : return $this->dmtx_encode($data,false,false);
 			case 'dmtxs'      : return $this->dmtx_encode($data,false,false);
 			case 'dmtxr'      : return $this->dmtx_encode($data, true,false);
@@ -1414,7 +1418,8 @@ class barcode_generator {
 
 	private function code_128_encode($data, $dstate, $fnc1) {
 		$data = preg_replace('/[\x80-\xFF]/', '', $data);
-		$label = preg_replace('/[\x00-\x1F\x7F]/', ' ', $data);
+		$labelData = str_replace('\FNC1', '', $data);
+		$label = preg_replace('/[\x00-\x1F\x7F]/', ' ', $labelData);
 		$chars = $this->code_128_normalize($data, $dstate, $fnc1);
 		$checksum = $chars[0] % 103;
 		for ($i = 1, $n = count($chars); $i < $n; $i++) {
@@ -1437,6 +1442,7 @@ class barcode_generator {
 	}
 
 	private function code_128_normalize($data, $dstate, $fnc1) {
+		$data = str_replace('\FNC1', chr(29), $data);
 		$detectcba = '/(^[0-9]{4,}|^[0-9]{2}$)|([\x60-\x7F])|([\x00-\x1F])/';
 		$detectc = '/(^[0-9]{6,}|^[0-9]{4,}$)/';
 		$detectba = '/([\x60-\x7F])|([\x00-\x1F])/';
@@ -1727,8 +1733,9 @@ class barcode_generator {
 
 	/* - - - - QR ENCODER - - - - */
 
-	private function qr_encode($data, $ecl) {
-		list($mode, $vers, $ec, $data) = $this->qr_encode_data($data, $ecl);
+	private function qr_encode($data, $ecl, $fnc1) {
+		$data = str_replace('\FNC1', chr(29), $data);
+		list($mode, $vers, $ec, $data) = $this->qr_encode_data($data, $ecl, $fnc1);
 		$data = $this->qr_encode_ec($data, $ec, $vers);
 		list($size, $mtx) = $this->qr_create_matrix($vers, $data);
 		list($mask, $mtx) = $this->qr_apply_best_mask($mtx, $size);
@@ -1741,7 +1748,7 @@ class barcode_generator {
 		);
 	}
 
-	private function qr_encode_data($data, $ecl) {
+	private function qr_encode_data($data, $ecl, $fnc1) {
 		$mode = $this->qr_detect_mode($data);
 		$version = $this->qr_detect_version($data, $mode, $ecl);
 		$version_group = (($version < 10) ? 0 : (($version < 27) ? 1 : 2));
@@ -1751,18 +1758,19 @@ class barcode_generator {
 		if ($mode == 3) $max_chars <<= 1;
 		$data = substr($data, 0, $max_chars);
 		/* Convert from character level to bit level. */
+		error_log($mode, 0);
 		switch ($mode) {
 			case 0:
-				$code = $this->qr_encode_numeric($data, $version_group);
+				$code = $this->qr_encode_numeric($data, $version_group, $fnc1);
 				break;
 			case 1:
-				$code = $this->qr_encode_alphanumeric($data, $version_group);
+				$code = $this->qr_encode_alphanumeric($data, $version_group, $fnc1);
 				break;
 			case 2:
-				$code = $this->qr_encode_binary($data, $version_group);
+				$code = $this->qr_encode_binary($data, $version_group, $fnc1);
 				break;
 			case 3:
-				$code = $this->qr_encode_kanji($data, $version_group);
+				$code = $this->qr_encode_kanji($data, $version_group, $fnc1);
 				break;
 		}
 		for ($i = 0; $i < 4; $i++) $code[] = 0;
@@ -1812,8 +1820,12 @@ class barcode_generator {
 		return 40;
 	}
 
-	private function qr_encode_numeric($data, $version_group) {
-		$code = array(0, 0, 0, 1);
+	private function qr_encode_numeric($data, $version_group, $fnc1) {
+		if ($fnc1 === true) {
+			$code = array(0, 1, 0, 1, 0, 0, 0, 1);
+		} else {
+			$code = array(0, 0, 0, 1);
+		}
 		$length = strlen($data);
 		switch ($version_group) {
 			case 2:  /* 27 - 40 */
@@ -1855,9 +1867,13 @@ class barcode_generator {
 		return $code;
 	}
 
-	private function qr_encode_alphanumeric($data, $version_group) {
+	private function qr_encode_alphanumeric($data, $version_group, $fnc1) {
 		$alphabet = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:';
-		$code = array(0, 0, 1, 0);
+		if ($fnc1 === true) {
+			$code = array(0, 1, 0, 1, 0, 0, 1, 0);
+		} else {
+			$code = array(0, 0, 1, 0);
+		}
 		$length = strlen($data);
 		switch ($version_group) {
 			case 2:  /* 27 - 40 */
@@ -1907,8 +1923,12 @@ class barcode_generator {
 		return $code;
 	}
 
-	private function qr_encode_binary($data, $version_group) {
-		$code = array(0, 1, 0, 0);
+	private function qr_encode_binary($data, $version_group, $fnc1) {
+		if ($fnc1 === true) {
+			$code = array(0, 1, 0, 1, 0, 1, 0, 0);
+		} else {
+			$code = array(0, 1, 0, 0);
+		}
 		$length = strlen($data);
 		switch ($version_group) {
 			case 2:  /* 27 - 40 */
@@ -1945,8 +1965,12 @@ class barcode_generator {
 		return $code;
 	}
 
-	private function qr_encode_kanji($data, $version_group) {
-		$code = array(1, 0, 0, 0);
+	private function qr_encode_kanji($data, $version_group, $fnc1) {
+		if ($fnc1 === true) {
+			$code = array(0, 1, 0, 1, 1, 0, 0, 0);
+		} else {
+			$code = array(1, 0, 0, 0);
+		}
 		$length = strlen($data);
 		switch ($version_group) {
 			case 2:  /* 27 - 40 */
@@ -2885,6 +2909,7 @@ class barcode_generator {
 
 	private function dmtx_encode_data($data, $rect, $fnc1) {
 		/* Convert to data codewords. */
+		$data = str_replace('\FNC1', chr(29), $data);
 		$edata = ($fnc1 ? array(232) : array());
 		$length = strlen($data);
 		$offset = 0;

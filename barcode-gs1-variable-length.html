@@ -1,0 +1,92 @@
+<html>
+
+<head>
+	<title>barcode.php gs1 variable length strings test</title>
+	<style>
+		body {
+			font-family: Helvetica, sans-serif;
+			padding: 1em;
+		}
+
+		.imgW20rem {
+			width: 20rem;
+		}
+
+		.list-unstyled {
+			list-style-type: none;
+		}
+
+		.d-flex {
+			display: flex;
+		}
+	</style>
+</head>
+
+<body>
+
+	<h3>GS1-128 codes with variable length Application Identifiers</h3>
+	<p>0</p>
+	<p><img src="barcode.php?s=ean-128&ts=3&th=12&d=00858000000000000007"></p>
+	<p>1</p>
+	<p><img src="barcode.php?s=ean-128&ts=3&th=12&d=0085800000000000000702085800000000093720"></p>
+	<p>2</p>
+	<p><img src="barcode.php?s=ean-128&ts=3&th=12&d=0085800000000000000702085800000000093720\FNC110LOT123"></p>
+
+	<h3>GS1-DataMatrix codes with variable length Application Identifiers</h3>
+	<p>3</p>
+	<div class="d-flex">
+		<img src="barcode.php?s=gs1-dmtx&d=0108580000000009">
+		<ul class="list-unstyled">
+			<li>(01) 08580000000009</li>
+		</ul>
+	</div>
+
+	<p>4</p>
+	<div class="d-flex">
+		<img src="barcode.php?s=gs1-dmtx&d=010858000000000910LOT123"></p>
+		<ul class="list-unstyled">
+			<li>(01) 08580000000009</li>
+			<li>(10) LOT123</li>
+		</ul>
+	</div>
+
+	<p>5</p>
+	<div class="d-flex">
+		<img src="barcode.php?s=gs1-dmtx&d=010858000000000910LOT123\FNC1211234567"></p>
+		<ul class="list-unstyled">
+			<li>(01) 08580000000009</li>
+			<li>(10) LOT123</li>
+			<li>(21) 1234567</li>
+		</ul>
+	</div>
+
+	<h3>GS1-QR codes with variable length Application Identifiers</h3>
+	<p>3</p>
+	<div class="d-flex">
+		<img src="barcode.php?s=gs1-qr-m&d=0108580000000009">
+		<ul class="list-unstyled">
+			<li>(01) 08580000000009</li>
+		</ul>
+	</div>
+
+	<p>4</p>
+	<div class="d-flex">
+		<img src="barcode.php?s=gs1-qr-m&d=010858000000000910LOT123"></p>
+		<ul class="list-unstyled">
+			<li>(01) 08580000000009</li>
+			<li>(10) LOT123</li>
+		</ul>
+	</div>
+
+	<p>5</p>
+	<div class="d-flex">
+		<img src="barcode.php?s=gs1-qr-h&d=010858000000000910LOT123\FNC1211234567"></p>
+		<ul class="list-unstyled">
+			<li>(01) 08580000000009</li>
+			<li>(10) LOT123</li>
+			<li>(21) 1234567</li>
+		</ul>
+	</div>
+</body>
+
+</html>
